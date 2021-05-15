@@ -1,0 +1,4 @@
+node_modules
+.next
+# Cache used by TypeScript's incremental build
+*.tsbuildinfo
