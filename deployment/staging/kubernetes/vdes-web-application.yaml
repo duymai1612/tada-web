@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tada-web-staging
+  namespace: tada-staging
+  labels:
+    type: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: tada-web-staging
+  template:
+    metadata:
+      labels:
+        name: tada-web-staging
+    spec:
+      containers:
+        - name: tada-web
+          image: 950066988925.dkr.ecr.ap-southeast-1.amazonaws.com/tada-web:stag
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: docker-registry
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tada-web-staging
+  namespace: tada-staging
+  labels:
+    type: backend
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+  selector:
+    name: tada-web-staging
